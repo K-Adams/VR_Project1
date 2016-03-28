@@ -14,15 +14,20 @@ public class Gun : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            fire();
+        }
 
-	public void fire()
+    }
+
+    public void fire()
 	{
-		GameObject projectile = GameObject.Instantiate<GameObject> (projectile);
+        Debug.Log("FIRED");
+		projectile = GameObject.Instantiate<GameObject> (projectile);
 
-		projectile.transform.position = gun;
-		projectile.transform.rotation = gun;
+		projectile.transform.position = gun.position;
+		projectile.transform.rotation = gun.rotation;
 		projectile.transform.localScale = Vector3.one;
 
 		Rigidbody rb = projectile.GetComponent<Rigidbody> ();

@@ -56,9 +56,10 @@ public class PlayerInput : MonoBehaviour {
 		cannon.transform.localRotation = Quaternion.AngleAxis(currentPitch, );
 		if(currentPitch > pitchMax){
 		}*/
+        /*
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			AK.fire ();
-		}
+		}*/
 		
 		
 		//Cannon power level increase/decrease capsule speed
