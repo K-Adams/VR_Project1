@@ -4,7 +4,6 @@ using System.Collections;
 public class PlayerInput : MonoBehaviour {
 
 	public Transform movement;
-	public Camera camera;
 	float translationSpeed = 90.0f;
 	float horizontal;
 	float vertical;
@@ -20,13 +19,34 @@ public class PlayerInput : MonoBehaviour {
 		float horizontalIncrement;
 		float verticalIncrement;
 
-
-			horizontalIncrement = translationSpeed * horizontal * Time.deltaTime;
-			//Debug.Log (horizontalIncrement);
-			verticalIncrement = translationSpeed * vertical * Time.deltaTime;
-			//Debug.Log (verticalIncrement);
-			movement.Translate (new Vector3 (horizontalIncrement, 0, verticalIncrement), Space.Self);
+		horizontalIncrement = translationSpeed * horizontal * Time.deltaTime;
+		verticalIncrement = translationSpeed * vertical * Time.deltaTime;
+		movement.Translate (new Vector3 (horizontalIncrement, 0, verticalIncrement), Space.Self);
 
 
+	}
+
+	private bool connected = false;
+	IEnumerator CheckForControllers()
+	{
+		while(true)
+		{
+			var controllers = Input.GetJoystickNames();
+			if (!connected && controllers.Length > 0)
+			{
+				connected = true;
+				Debug.Log("Connected");
+			}
+			else if (connected && controllers.Length == 0)
+			{
+				connected = false;
+				Debug.Log("Disconnected");
+			}
+			yield return new WaitForSeconds(1f);
+		}
+	}
+	void Awake()
+	{
+		StartCoroutine(CheckForControllers());
 	}
 }
