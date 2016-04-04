@@ -3,10 +3,10 @@ using System.Collections;
 
 public class Projectile : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
+
+    // Use this for initialization
+    void Start () {
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -19,17 +19,14 @@ public class Projectile : MonoBehaviour {
 			Debug.DrawRay (contact.point, contact.normal, Color.white);
 		}
 			
-		Debug.Log ("Collision");
-
-
 		if (collision.transform.name == "Terrain") {
-            Destroy(gameObject, 2f);
-            Debug.Log ("ground hit");
+			GameObject.Destroy (this.gameObject);
+			Debug.Log ("ground hit");
 		}
 
 		if (collision.transform.name == "ZomBearPrefab") {
-            Destroy(gameObject, 2f);
-            Debug.Log ("target hit");
+			GameObject.Destroy (this.gameObject);
+			Debug.Log ("target hit");
 		
 		}
 	}

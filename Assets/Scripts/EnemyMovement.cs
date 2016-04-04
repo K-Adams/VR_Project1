@@ -8,7 +8,8 @@ namespace CompleteProject
         Transform garden;               // Reference to the player's position.
         EnemyHealth enemyHealth;        // Reference to this enemy's health.
         NavMeshAgent nav;               // Reference to the nav mesh agent.
-
+        bool canMove = true;
+        GameObject barrierCollision;
 
         void Awake ()
         {
@@ -21,8 +22,15 @@ namespace CompleteProject
 
         void Update ()
         {
+            if (canMove)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, garden.position, 1 * Time.deltaTime);
 
-            transform.position = Vector3.MoveTowards(transform.position, garden.position, 1 * Time.deltaTime);
+            }
+            else if(barrierCollision == null)
+            {
+                canMove = true;
+            }
             // If the enemy and the player have health left...
             // if(enemyHealth.currentHealth > 0)
             // {
@@ -36,5 +44,27 @@ namespace CompleteProject
            //     nav.enabled = false;
            // }
         }
+
+
+
+
+
+        void OnCollisionEnter(Collision collision)
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Debug.DrawRay(contact.point, contact.normal, Color.white);
+            }
+
+            if (collision.transform.name == "barrier")
+            {
+                barrierCollision = collision.gameObject;
+                canMove = false;
+            }
+         
+        }
+
+
+
     }
 }

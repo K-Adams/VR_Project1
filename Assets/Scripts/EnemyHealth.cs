@@ -9,15 +9,24 @@ namespace CompleteProject
         public float sinkSpeed = 2.5f;              // The speed at which the enemy sinks through the floor when dead.
         public int scoreValue = 10;                 // The amount added to the player's score when the enemy dies.
         public AudioClip deathClip;                 // The sound to play when the enemy dies.
+        public AudioClip hurtClip;
 
-
+        Health garden;
         Animator anim;                              // Reference to the animator.
         AudioSource enemyAudio;                     // Reference to the audio source.
         ParticleSystem hitParticles;                // Reference to the particle system that plays when the enemy is damaged.
         CapsuleCollider capsuleCollider;            // Reference to the capsule collider.
         bool isDead;                                // Whether the enemy is dead.
         bool isSinking;                             // Whether the enemy has started sinking through the floor.
+        bool isInGarden = false;
 
+        Player player;
+
+
+        void Start()
+        {
+            garden = GameObject.FindGameObjectWithTag("Player").GetComponent<Health>();
+        }
 
         void Awake ()
         {
@@ -29,11 +38,45 @@ namespace CompleteProject
 
             // Setting the current health when the enemy first spawns.
             currentHealth = startingHealth;
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+        }
+
+
+
+        void OnCollisionEnter(Collision collision)
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Debug.DrawRay(contact.point, contact.normal, Color.white);
+            }
+            if (collision.transform.name == "ProjectilePrefab(Clone)" || collision.transform.name == "ProjectilePrefab")
+            {
+                Debug.Log("Enemy hit");
+                player.currentScore += 10;
+                TakeDamage(10, collision.transform.position);
+            }
+           
+
+
+        }
+
+
+        void OnTriggerEnter(Collider collision)
+        {
+            if (collision.transform.name == "garden")
+            {
+                Debug.Log("TAKING DAMAGE");
+                garden.enemiesInside += 1;
+                isInGarden = true;
+            }
         }
 
 
         void Update ()
         {
+
+            
             // If the enemy should be sinking...
             if(isSinking)
             {
@@ -51,11 +94,13 @@ namespace CompleteProject
                 return;
 
             // Play the hurt sound effect.
-            enemyAudio.Play ();
+            //enemyAudio.Play ();
 
             // Reduce the current health by the amount of damage sustained.
             currentHealth -= amount;
-            
+            enemyAudio.clip = hurtClip;
+            enemyAudio.Play();
+
             // Set the position of the particle system to where the hit was sustained.
             hitParticles.transform.position = hitPoint;
 
@@ -70,12 +115,17 @@ namespace CompleteProject
             }
         }
 
+      
+
 
         void Death ()
         {
             // The enemy is dead.
             isDead = true;
-
+            if (isInGarden)
+            {
+                garden.enemiesInside--;
+            }
             // Turn the collider into a trigger so shots can pass through it.
             capsuleCollider.isTrigger = true;
 
@@ -91,7 +141,7 @@ namespace CompleteProject
         public void StartSinking ()
         {
             // Find and disable the Nav Mesh Agent.
-            GetComponent <NavMeshAgent> ().enabled = false;
+            //GetComponent <NavMeshAgent> ().enabled = false;
 
             // Find the rigidbody component and make it kinematic (since we use Translate to sink the enemy).
             GetComponent <Rigidbody> ().isKinematic = true;
